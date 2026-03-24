@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "id": "admin-id-123",
+      "username": "admin",
+      "password": "password123"
+    }
+  ],
+  "projects": [
+    {
+      "_id": "1774335088514",
+      "name": "acoffe1",
+      "userId": "admin-id-123",
+      "port": 8001,
+      "url": "http://localhost:5000/acoffe1/",
+      "githubRepo": "kmamta26/coffie",
+      "githubUrl": "https://github.com/kmamta26/coffie.git",
+      "status": "failed"
+    }
+  ],
+  "nextPort": 8016
+}

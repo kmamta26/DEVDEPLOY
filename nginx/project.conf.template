@@ -1,0 +1,20 @@
+# Per-project NGINX reverse proxy template.
+# Variables are replaced by the deployment engine:
+#   {{PROJECT_NAME}} - the sanitized project name
+#   {{PORT}}         - the dynamically assigned container port
+
+location ^~ /{{PROJECT_NAME}} {
+    proxy_pass http://127.0.0.1:{{PORT}};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_cache_bypass $http_upgrade;
+
+    # Rewrite the path to strip /project-name prefix
+    rewrite ^/{{PROJECT_NAME}}(/.*)$ $1 break;
+    rewrite ^/{{PROJECT_NAME}}$ / break;
+}
