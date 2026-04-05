@@ -5,5 +5,14 @@
   "env": {
     "NODE_ENV": "production"
   },
-  "regions": ["iad1"]
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "destination": "https://devdeploy-83x4.onrender.com/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
