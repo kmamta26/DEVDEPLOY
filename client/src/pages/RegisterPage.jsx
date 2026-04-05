@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -18,19 +19,19 @@ const RegisterPage = () => {
         setError('');
         setSuccess('');
 
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
+        if (!username || !email) {
+            setError('Username and email are required');
             return;
         }
 
-        if (password.length < 8) {
-            setError('Password must be at least 8 characters');
+        if (password && password.length < 6) {
+            setError('Password must be at least 6 characters');
             return;
         }
 
         setLoading(true);
         try {
-            const res = await api.post('/register', { email, password });
+            const res = await api.post('/auth/register', { username, email, password });
             setSuccess('Account created! Redirecting to login...');
             setTimeout(() => {
                 navigate('/login');
@@ -60,6 +61,18 @@ const RegisterPage = () => {
                 <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-8 space-y-6 shadow-2xl">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
+                            <label className="text-sm font-medium text-zinc-300">Username</label>
+                            <input 
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="your_username"
+                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder:text-zinc-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all"
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-2">
                             <label className="text-sm font-medium text-zinc-300">Email Address</label>
                             <input 
                                 type="email"
@@ -72,27 +85,15 @@ const RegisterPage = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-zinc-300">Password</label>
+                            <label className="text-sm font-medium text-zinc-300">Password (Optional)</label>
                             <input 
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="••••••••"
                                 className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder:text-zinc-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all"
-                                required
                             />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-zinc-300">Confirm Password</label>
-                            <input 
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="••••••••"
-                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder:text-zinc-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all"
-                                required
-                            />
+                            <p className="text-xs text-zinc-600">Password is optional in development mode</p>
                         </div>
 
                         {error && (

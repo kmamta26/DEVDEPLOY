@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -17,11 +16,11 @@ const LoginPage = () => {
         setError('');
 
         try {
-            const res = await api.post('/login', { email, password });
+            const res = await api.post('/auth/login', { username: email });
             localStorage.setItem('devdeploy_token', res.data.token);
             navigate('/dashboard');
         } catch (err) {
-            setError(err.response?.data?.error || 'Invalid email or password.');
+            setError(err.response?.data?.error || 'Login failed. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -45,7 +44,9 @@ const LoginPage = () => {
                 <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-8 space-y-6 shadow-2xl">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-zinc-300">Email Address</label>
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-medium text-zinc-300">Email Address</label>
+                            </div>
                             <input 
                                 type="email" 
                                 className="w-full bg-black border border-zinc-900 rounded-lg px-4 py-3 text-white focus:border-white outline-none transition-all placeholder:text-zinc-800 text-sm"
@@ -57,18 +58,10 @@ const LoginPage = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <label className="text-sm font-medium text-zinc-300">Password</label>
-                                <span className="text-xs text-zinc-600 hover:text-zinc-400 cursor-pointer transition-colors">Forgot Password?</span>
+                            <label className="text-sm font-medium text-zinc-300">Development Mode</label>
+                            <div className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-zinc-600 text-sm">
+                                Auto-login enabled (no password needed)
                             </div>
-                            <input 
-                                type="password" 
-                                className="w-full bg-black border border-zinc-900 rounded-lg px-4 py-3 text-white focus:border-white outline-none transition-all placeholder:text-zinc-800 text-sm"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
                         </div>
 
                         <AnimatePresence>
