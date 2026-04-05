@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevDeploy — AWS Cloud Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="devdeploy-v3.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#030014] text-white p-10 font-['Inter'] relative min-h-screen overflow-x-hidden">
+    <!-- Premium Mesh Orbs -->
+    <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-[120px] -z-10 animate-pulse"></div>
+    <div class="fixed bottom-[-15%] left-[-10%] w-[700px] h-[700px] bg-pink-500/10 rounded-full blur-[150px] -z-10"></div>
+    <div class="fixed top-[40%] left-[30%] w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] -z-10"></div>
+
+    <script src="navbar-v3.js"></script>
+
+    <main class="max-w-7xl mx-auto px-10 py-10 animate-fade">
+        <header class="flex flex-col md:flex-row items-end justify-between gap-10 mb-20">
+            <div>
+                <h1 class="text-6xl font-black mb-6 tracking-tightest leading-tight">Node: <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400">AWS Cloud</span></h1>
+                <p class="text-lg opacity-40">Manage global compute nodes and server clusters.</p>
+            </div>
+            <div id="signalStatus" class="px-10 py-4 rounded-[2rem] bg-white/5 border border-white/10 text-xs font-black uppercase tracking-[0.2em] text-white/30">
+                Satellite Check: <span class="text-emerald-400 ml-2 animate-pulse">ACTIVE</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+            <aside class="space-y-6 lg:col-span-1">
+                <div class="glass-card p-10 rounded-[3rem] border-white/5">
+                    <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-6">Cluster Info</p>
+                    <div class="space-y-8">
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-1">Region</p>
+                            <p class="text-xl font-bold">us-east-1</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-1">Compute Zone</p>
+                            <p class="text-xl font-bold">Global VPC</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-1">Auth Scheme</p>
+                            <p class="text-xl font-bold">IAM AES-256</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-10 rounded-[3rem] border-white/5 bg-gradient-to-br from-orange-500/5 to-transparent">
+                    <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-6">Action Station</p>
+                    <button id="resyncBtn" onclick="location.reload()" class="btn-primary w-full py-4 text-xs tracking-widest">RESYNC IAM</button>
+                    <button class="btn-outline w-full py-4 text-xs tracking-widest mt-4">VPC CONFIG</button>
+                </div>
+            </aside>
+
+            <section class="lg:col-span-3 space-y-12">
+                <div class="glass-card p-12 rounded-[4rem] border-emerald-500/10 min-h-[500px] flex flex-col space-y-8">
+                    <div class="flex items-center justify-between border-b border-white/5 pb-8">
+                        <h2 class="text-3xl font-black tracking-tightest">Deployment Log Stream</h2>
+                        <span class="text-[9px] font-black uppercase tracking-widest px-6 py-2 rounded-xl bg-white/5">Real-time Node Monitoring</span>
+                    </div>
+
+                    <div id="logStation" class="flex-1 bg-black/40 border border-white/5 rounded-[2.5rem] p-10 font-mono text-xs overflow-y-auto space-y-4 max-h-[600px] leading-relaxed">
+                        <div class="text-emerald-400/60">[SYNC] Initializing secure handshake with AWS US-EAST-1 cluster...</div>
+                        <div class="text-emerald-400/60">[SYNC] Identity established. Permissions valid for EC2, S3, RDS.</div>
+                        <div class="text-white/20">[LOG] Station heartbeat: 64ms latency detected.</div>
+                        <div class="text-white/20">[LOG] Monitoring global traffic nodes... 0 active threats.</div>
+                        <div class="text-emerald-400/60">[SYNC] VPC link: SUCCESS. Cluster state: STABLE.</div>
+                        <div class="text-purple-400 font-bold">[EVENT] Manual Synchronisation requested by Commander...</div>
+                    </div>
+
+                    <div class="pt-4 flex items-center justify-between text-[8px] font-black uppercase tracking-[0.3em] opacity-30 px-4">
+                        <span>DevDeploy Terminal v2.7.4-BETA</span>
+                        <span>Sat-Link #0093-X</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const logs = document.getElementById('logStation');
+        function addLog(msg, color='white/20') {
+            const l = document.createElement('div');
+            l.className = `text-${color}`;
+            l.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logs.appendChild(l);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        setInterval(() => {
+            const samples = [
+                { msg: 'Health check passed for bucket devdeploy-pulse-01...', col: 'emerald-400/60' },
+                { msg: 'Satellite latency check: 44ms to primary VPC gateway.', col: 'white/10' },
+                { msg: 'Inbound GET request processed for Project Node #889.', col: 'purple-500/40' },
+                { msg: 'Cluster sync: OK.', col: 'emerald-400/60' }
+            ];
+            const s = samples[Math.floor(Math.random() * samples.length)];
+            addLog(s.msg, s.col);
+        }, 8000);
+    </script>
+</body>
+</html>

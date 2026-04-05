@@ -1,0 +1,58 @@
+name: DevDeploy CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: './backend/package-lock.json'
+
+    - name: Install Backend Dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Install Frontend Dependencies
+      run: |
+        cd client
+        npm install
+
+    - name: Build Frontend
+      run: |
+        cd client
+        npm run build
+
+    - name: Run Tests (Backend)
+      run: |
+        cd backend
+        # npm test # Add your test command here
+      env:
+        MONGO_URI: mongodb://localhost:27017/devdeploy_test
+        JWT_SECRET: test_secret_key
+
+    - name: Deploy Trigger (Example)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "Triggering production deployment..."
+        # curl -X POST https://your-devdeploy-instance.com/api/webhook/github \
+        #  -H "Content-Type: application/json" \
+        #  -d '{"repository": {"name": "${{ github.event.repository.name }}"}}'

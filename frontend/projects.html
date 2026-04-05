@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevDeploy — Global Stacks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="devdeploy-v3.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#030014] text-white p-10 font-['Inter'] relative min-h-screen overflow-x-hidden">
+    <!-- Premium Mesh Orbs -->
+    <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-[120px] -z-10 animate-pulse"></div>
+    <div class="fixed bottom-[-15%] left-[-10%] w-[700px] h-[700px] bg-pink-500/10 rounded-full blur-[150px] -z-10"></div>
+    <div class="fixed top-[40%] left-[30%] w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] -z-10 animate-pulse"></div>
+
+    <script src="navbar-v3.js"></script>
+
+    <main class="max-w-7xl mx-auto px-6 py-20 animate-fade">
+        <header class="flex flex-col md:flex-row items-end justify-between gap-10 mb-20">
+            <div>
+                <h1 class="text-6xl font-black mb-6 tracking-tightest leading-tight">Project <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Node Hub</span></h1>
+                <p class="text-lg opacity-40">Manage your distributed cloud nodes and active handshakes.</p>
+            </div>
+            <div id="statsBox" class="px-10 py-6 rounded-[2rem] bg-white/5 border border-white/10 text-center">
+                <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-1">Active Nodes</p>
+                <div id="totalNodes" class="text-4xl font-black text-purple-400">...</div>
+            </div>
+        </header>
+
+        <section id="nodeGrid" class="grid grid-cols-1 gap-8">
+            <div class="col-span-full py-20 text-center opacity-20 font-black uppercase tracking-widest">
+                Scanning global clusters... 👾
+            </div>
+        </section>
+    </main>
+
+    <!-- Build Logs Modal Node -->
+    <div id="logModal" class="hidden fixed inset-0 z-[2000] flex items-center justify-center p-10 bg-[#030014]/90 backdrop-blur-3xl transition-all">
+        <div class="w-full max-w-4xl bg-white/5 border border-white/10 rounded-[4rem] p-16 animate-fade shadow-3xl">
+             <div class="flex items-center justify-between mb-12">
+                <h2 class="text-3xl font-black tracking-tightest">Deployment Heartbeat <br><span id="targetNodeName" class="text-purple-400">NODE-00</span></h2>
+                <button onclick="closeLogs()" class="p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-black uppercase tracking-widest transition-all">TERMINATE VIEW &times;</button>
+             </div>
+             
+             <div id="logStation" class="bg-black/40 border border-white/5 rounded-[3rem] p-12 font-mono text-[11px] h-[500px] overflow-y-auto space-y-4 leading-loose selection:bg-purple-500/40">
+                <!-- Build logs go here -->
+             </div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api';
+        
+        async function loadNodes() {
+            const grid = document.getElementById('nodeGrid');
+            try {
+                const res = await fetch(`${API}/deploy`, {
+                    headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('token') || '') }
+                });
+                const data = await res.json();
+                
+                if (res.ok && data.success && data.data) {
+                    document.getElementById('totalNodes').innerText = data.data.count || 0;
+                    renderNodes(data.data.deployments || []);
+                } else {
+                    document.getElementById('totalNodes').innerText = '0';
+                    grid.innerHTML = '<div class="glass-card p-20 text-center opacity-30 uppercase font-black">Cluster Rejection: Node Unauthorized.</div>';
+                }
+            } catch (e) { 
+                document.getElementById('totalNodes').innerText = '0';
+                grid.innerHTML = '🔴 CLUSTER SYNC ERROR: Link to Station #001 Failed.'; 
+            }
+        }
+
+        function renderNodes(nodes) {
+            const grid = document.getElementById('nodeGrid');
+            if (nodes.length === 0) {
+                grid.innerHTML = '<div class="glass-card p-20 text-center rounded-[4rem] opacity-30 uppercase font-black">Cluster Is Empty 📡 Wait for synchronization...</div>';
+                return;
+            }
+
+            grid.innerHTML = nodes.map(d => `
+                <div class="glass-card p-12 rounded-[4rem] flex flex-col md:flex-row items-center justify-between gap-10 hover:border-purple-500/20 transition-all">
+                    <div class="flex items-center gap-10 w-full md:w-auto">
+                        <div class="w-20 h-20 rounded-[2rem] bg-white/5 flex items-center justify-center text-3xl shadow-2xl border border-white/10">⚡</div>
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <h3 class="text-3xl font-black tracking-tightest uppercase">${d.projectName}</h3>
+                                <span class="px-5 py-1.5 rounded-full bg-${d.status==='active'?'emerald':d.status==='failed'?'red':'purple'}-500/10 text-${d.status==='active'?'emerald':d.status==='failed'?'red':'purple'}-500 text-[9px] font-black uppercase tracking-widest border border-${d.status==='active'?'emerald':d.status==='failed'?'red':'purple'}-500/20">${d.status}</span>
+                            </div>
+                            <p class="text-[10px] uppercase font-black tracking-widest text-white/30 truncate max-w-xs">${d.folderPath}</p>
+                            <p class="mt-4 text-[9px] font-black uppercase tracking-widest text-white/10">ID: ${d.id}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-6 w-full md:w-auto pt-8 md:pt-0 border-t md:border-t-0 border-white/5">
+                        <button onclick='viewLogs(${JSON.stringify(d)})' class="btn-outline flex-1 md:flex-none py-4 px-10 rounded-2xl text-[10px] font-black uppercase tracking-widest border-white/5">BUILD LOGS &rarr;</button>
+                        <a href="${d.url}" target="_blank" class="flex-1 md:flex-none btn-primary py-4 px-10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center shadow-2xl">OPEN HUB</a>
+                        <button onclick="terminateNode('${d.id}')" class="p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-red-500/10 hover:border-red-500/20 text-white/20 hover:text-red-500 transition-all">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewLogs(node) {
+            document.getElementById('logModal').classList.remove('hidden');
+            document.getElementById('targetNodeName').innerText = node.projectName.toUpperCase();
+            const logs = document.getElementById('logStation');
+            logs.innerHTML = node.logs.map(l => `<div class="opacity-60 border-b border-white/5 pb-2 mb-2">${l}</div>`).join('') || '<div class="opacity-30">NO LOGS HANDSHAKE.</div>';
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function closeLogs() {
+            document.getElementById('logModal').classList.add('hidden');
+        }
+
+        async function terminateNode(id) {
+            if (!confirm('TERMINATION HANDSHAKE: Erasing project from global clusters. Continue?')) return;
+            try {
+                const res = await fetch(`${API}/deploy/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+                });
+                if (res.ok) {
+                    window.showToast('NODE PERMANENTLY ERASED');
+                    loadNodes();
+                } else {
+                    alert('FAILURE: REJECTED BY HUB.');
+                }
+            } catch (e) { alert('COMM LINK DOWN'); }
+        }
+
+        loadNodes();
+        setInterval(loadNodes, 5000); // Polling for the logs/status update
+    </script>
+</body>
+</html>

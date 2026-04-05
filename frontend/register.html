@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevDeploy — DevDeploy Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="devdeploy-premium.css">
+    <script src="auth.js"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div class="bg-decor">
+        <div class="bg-orb orb-purple"></div>
+        <div class="bg-orb orb-blue"></div>
+    </div>
+
+    <div class="w-full max-w-md relative z-10">
+        <div class="glass-card p-10 rounded-[3rem] shadow-2xl shimmer">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-white mb-6 shadow-2xl text-4xl">💎</div>
+                <h1 class="text-4xl font-black mb-2">DevDeploy Access</h1>
+                <p class="text-white/40 text-sm font-medium">Create your high-performance workspace</p>
+            </div>
+
+            <form id="regForm" class="space-y-6">
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3 ml-1">Username</label>
+                    <input type="text" id="username" placeholder="sky_commander" required 
+                           class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3 ml-1">Email (Optional)</label>
+                    <input type="email" id="email" placeholder="admin@domain.cloud" 
+                           class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-3 ml-1">Secure Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required 
+                           class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white">
+                </div>
+
+                <div id="errorMsg" class="hidden p-5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs text-center font-bold leading-relaxed"></div>
+
+                <button type="submit" id="regBtn" class="btn-primary w-full py-5 text-lg">
+                    Initialize Account
+                </button>
+            </form>
+
+            <p class="mt-8 text-center text-white/30 text-xs font-medium">
+                Already part of the fleet? <a href="/login" class="text-purple-400 font-bold hover:underline transition-all">Connect to Station</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('regForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('regBtn');
+            const errBox = document.getElementById('errorMsg');
+
+            btn.disabled = true;
+            btn.textContent = 'Synchronizing...';
+            errBox.classList.add('hidden');
+
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, email })
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    localStorage.setItem('token', data.data.token);
+                    localStorage.setItem('username', data.data.user.username);
+                    window.location.href = '/dashboard';
+                } else {
+                    // Logic to handle MongoDB connection errors more clearly
+                    let errMsg = data.message;
+                    if (data.error && data.error.includes('ECONNREFUSED')) {
+                        errMsg = '📡 Database Offline: Please ensure MongoDB is running on the host system.';
+                    } else if (data.error) {
+                        errMsg += `: ${data.error}`;
+                    }
+                    errBox.innerHTML = errMsg;
+                    errBox.classList.remove('hidden');
+                }
+            } catch (err) {
+                errBox.textContent = '📡 Network Timeout: Check server availability.';
+                errBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Initialize Account';
+            }
+        };
+    </script>
+</body>
+</html>

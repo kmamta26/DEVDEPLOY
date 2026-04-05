@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevDeploy — GitHub Integration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="devdeploy-v3.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#030014] text-white p-10 font-['Inter'] relative min-h-screen overflow-x-hidden">
+    <!-- Premium Mesh Orbs -->
+    <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-[120px] -z-10 animate-pulse"></div>
+    <div class="fixed bottom-[-15%] left-[-10%] w-[700px] h-[700px] bg-pink-500/10 rounded-full blur-[150px] -z-10"></div>
+    <div class="fixed top-[40%] left-[30%] w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] -z-10 animate-pulse"></div>
+
+    <script src="navbar-v3.js"></script>
+
+    <main class="max-w-4xl mx-auto px-6 py-20 animate-fade text-center">
+        <header class="mb-20">
+            <h1 class="text-6xl font-black mb-8 tracking-tightest leading-tight">Link <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">GitHub Node</span></h1>
+            <p class="text-lg opacity-40">Directly sync your source repository with our deployment clusters.</p>
+        </header>
+
+        <section id="githubUI" class="glass-card p-16 rounded-[4rem] text-center space-y-12 animate-fade border-white/5 shadow-3xl">
+            <div class="w-24 h-24 bg-white/5 rounded-[2rem] mx-auto flex items-center justify-center text-4xl shadow-2xl border border-white/5">🐙</div>
+            
+            <form id="githubForm" class="space-y-8 text-left max-w-lg mx-auto">
+                <div class="space-y-4">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">GitHub Repository URL</label>
+                    <input type="text" id="repoUrl" placeholder="https://github.com/user/repo" required
+                           class="w-full bg-white/5 border border-white/10 rounded-[2rem] p-6 text-white font-semibold outline-none focus:border-purple-500 transition-all">
+                </div>
+                
+                <div class="space-y-4">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-white/30 ml-4">Branch Name (Use 'main' if unsure)</label>
+                    <input type="text" id="branchName" value="main" placeholder="main" required
+                           class="w-full bg-white/5 border border-white/10 rounded-[2rem] p-6 text-white font-semibold outline-none focus:border-purple-500 transition-all">
+                </div>
+
+                <button type="submit" id="syncBtn" class="btn-primary w-full py-8 text-2xl tracking-tightest font-black uppercase">
+                    DEPLOY FROM GITHUB &rarr;
+                </button>
+            </form>
+
+            <div id="debugStatus" class="hidden text-[10px] font-bold text-red-400 mt-10 uppercase tracking-widest">
+                Handshake Failed: Access Denied
+            </div>
+
+            <div class="flex items-center justify-center gap-10 pt-10 border-t border-white/5 opacity-40 text-[9px] font-black uppercase tracking-widest">
+                <span>Webhook Integration</span>
+                <span>Auto-Build Protocol</span>
+                <span>Edge Syncing</span>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('githubForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const url = document.getElementById('repoUrl').value.trim();
+            const branch = document.getElementById('branchName').value.trim();
+            const btn = document.getElementById('syncBtn');
+            const debug = document.getElementById('debugStatus');
+
+            if (!url.startsWith('https://github.com/')) {
+                alert('REJECTED: Please provide a valid GitHub repository link.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'INITIALIZING CLUSTER...';
+            debug.classList.add('hidden');
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const res = await fetch('/api/github/deploy', {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ 
+                        repoUrl: url,
+                        branch: branch || 'main',
+                        projectName: url.split('/').pop().replace('.git', '')
+                    })
+                });
+                
+                const data = await res.json();
+                if (res.ok) {
+                    window.showToast('CLONE SEQUENCE STARTED');
+                    btn.textContent = 'SUCCESS: SYNCING...';
+                    setTimeout(() => window.location.href = '/projects', 2000);
+                } else {
+                    debug.innerText = 'HUB ERROR: ' + (data.message || 'Access Denied');
+                    debug.classList.remove('hidden');
+                    btn.disabled = false;
+                    btn.textContent = 'RETRY CONNECTION';
+                }
+            } catch (e) { 
+                debug.innerText = 'OFFLINE: Node Comms Fail';
+                debug.classList.remove('hidden');
+                btn.disabled = false;
+                btn.textContent = 'RETRY CONNECTION';
+            }
+        };
+    </script>
+</body>
+</html>

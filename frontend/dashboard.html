@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevDeploy — Command Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --primary: #A855F7; --bg: #030014; }
+        body { background-color: var(--bg); font-family: 'Inter', sans-serif; color: #fff; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .side-nav { width: 280px; height: 100vh; position: fixed; left: 0; top: 0; background: rgba(0,0,0,0.4); border-right: 1px solid rgba(255,255,255,0.05); }
+        .main-content { margin-left: 280px; padding: 60px; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.1; }
+        .heading-premium { font-family: 'Outfit', sans-serif; letter-spacing: -0.01em; }
+        .card-stat { background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); transition: transform 0.3s ease; }
+        .card-stat:hover { transform: translateY(-5px); border-color: rgba(168, 85, 247, 0.3); }
+        .nav-item { transition: all 0.2s; border-radius: 1rem; color: #666; font-weight: 600; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .nav-item-active { background: rgba(168, 85, 247, 0.1); color: #A855F7; }
+    </style>
+</head>
+<body class="bg-[#030014] text-white p-10 font-['Inter'] min-h-screen">
+    <div class="orb w-[500px] h-[500px] bg-purple-500 top-0 right-0"></div>
+    <div class="orb w-[400px] h-[400px] bg-pink-500 bottom-0 left-0"></div>
+
+    <!-- Sidebar -->
+    <aside class="side-nav px-8 py-10 flex flex-col">
+        <div class="flex items-center gap-3 mb-16 px-4">
+            <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span class="text-xl font-extrabold heading-premium tracking-tight">DEVDEPLOY</span>
+        </div>
+
+        <nav class="space-y-4 flex-1">
+            <a href="/dashboard" class="flex items-center gap-4 py-4 px-6 nav-item nav-item-active">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Dashboard
+            </a>
+            <a href="/upload" class="flex items-center gap-4 py-4 px-6 nav-item">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                Upload Node
+            </a>
+            <a href="/projects" class="flex items-center gap-4 py-4 px-6 nav-item">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 01-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                Projects
+            </a>
+            <a href="/github" class="flex items-center gap-4 py-4 px-6 nav-item">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                GitHub Link
+            </a>
+            <a href="/aws" class="flex items-center gap-4 py-4 px-6 nav-item">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                AWS Cloud
+            </a>
+        </nav>
+
+        <button onclick="logout()" class="flex items-center gap-4 py-4 px-6 text-red-500 font-bold hover:bg-red-500/5 rounded-2xl transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            Terminate Session
+        </button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="flex justify-between items-end mb-16">
+            <div>
+                <h1 id="welcomeText" class="text-5xl font-black heading-premium mb-4">Command Station</h1>
+                <p id="subText" class="text-gray-500 font-medium tracking-wide uppercase text-xs">Awaiting instruction from Commander</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="h-12 w-12 rounded-full border border-white/10 bg-white/5 flex items-center justify-center">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            <div class="p-8 rounded-[2rem] glass card-stat flex flex-col justify-between h-56">
+                <div class="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center text-2xl">📦</div>
+                <div>
+                    <h2 id="totalProj" class="text-5xl font-black heading-premium">0</h2>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mt-2">Active Stacks Served</p>
+                </div>
+            </div>
+            <div class="p-8 rounded-[2rem] glass card-stat flex flex-col justify-between h-56">
+                <div class="w-12 h-12 bg-pink-500/10 rounded-2xl flex items-center justify-center text-2xl">⚡</div>
+                <div>
+                    <h2 id="liveDeploy" class="text-5xl font-black heading-premium">0</h2>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mt-2">Healthy Deployments</p>
+                </div>
+            </div>
+            <div class="p-8 rounded-[2rem] glass card-stat flex flex-col justify-between h-56">
+                <div class="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-2xl">🛰️</div>
+                <div>
+                    <h2 class="text-5xl font-black heading-premium">100%</h2>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mt-2">Global Network Uptime</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Projects Section -->
+        <section class="p-10 rounded-[3rem] glass">
+            <div class="flex items-center justify-between mb-10">
+                <h3 class="text-2xl font-black heading-premium">Recent Node Activity</h3>
+                <a href="/upload" class="py-3 px-8 bg-white text-black font-bold rounded-2xl text-sm hover:bg-gray-200 transition-all">NEW DEPLOYMENT</a>
+            </div>
+
+            <div id="projectList" class="space-y-4">
+                <div class="p-6 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center py-20 text-gray-600 font-bold uppercase text-[10px] tracking-widest">
+                    Telemetry Stream Pending...
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login';
+
+        async function loadUI() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            document.getElementById('welcomeText').innerText = `Welcome, ${user.username || 'Commander'}`;
+            document.getElementById('subText').innerText = `Connected to Node 0x77 — Identity: ${user.email || 'Authorised-Admin'}`;
+
+            try {
+                const res = await fetch('/api/deploy', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const response = await res.json();
+                
+                if (res.ok) {
+                    const deps = response.data.deployments || [];
+                    document.getElementById('totalProj').innerText = deps.length;
+                    document.getElementById('liveDeploy').innerText = deps.filter(d => d.status === 'success' || d.status === 'Live').length;
+
+                    const list = document.getElementById('projectList');
+                    if (deps.length > 0) {
+                        list.innerHTML = deps.slice(0, 5).map(p => `
+                            <div class="p-5 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between hover:bg-white/10 transition-all">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center text-sm">🚢</div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-white">${p.name}</h4>
+                                        <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">${p.status}</p>
+                                    </div>
+                                </div>
+                                <a href="${p.url}" target="_blank" class="text-[9px] font-bold text-purple-400 border border-purple-400/20 px-4 py-2 rounded-lg hover:bg-purple-400/10 transition-all">VIEW LIVE</a>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (err) { console.warn('Dashboard sync failed', err); }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login';
+        }
+
+        loadUI();
+    </script>
+</body>
+</html>
