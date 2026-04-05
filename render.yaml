@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: devdeploy-backend
+    name: devdeploy
     runtime: node
     rootDir: backend
     buildCommand: npm install
@@ -10,11 +10,3 @@ services:
         value: production
       - key: PORT
         value: 10000
-      - key: JWT_SECRET
-        value: devdeploy_super_secret_jwt_key_2024_change_me
-      - key: MONGO_URI
-        value: mongodb+srv://admin:devdeploy2024@cluster.mongodb.net/devdeploy
-      - key: CORS_ORIGIN
-        value: https://devdeploywebsite.vercel.app
-      - key: WORK_DIR
-        value: /var/data/workdir

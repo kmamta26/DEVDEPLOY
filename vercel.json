@@ -1,18 +1,5 @@
 {
-  "buildCommand": "cd client && npm install && npm run build",
-  "outputDirectory": "client/dist",
-  "framework": "vite",
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "destination": "https://devdeploy-83x4.onrender.com/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "buildCommand": "cd backend && npm install",
+  "startCommand": "node backend/server.js",
+  "outputDirectory": "backend"
 }
