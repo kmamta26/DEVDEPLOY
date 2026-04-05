@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
 import { Mail, Lock, LogIn, ShieldAlert, Loader2, Command } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -105,7 +105,7 @@ const LoginPage = () => {
                 </div>
 
                 <p className="text-center mt-8 text-zinc-600 text-xs">
-                    Don't have an account? <span className="text-zinc-400 hover:text-white cursor-pointer transition-colors font-medium">Contact support</span>
+                    Don't have an account? <Link to="/register" className="text-zinc-400 hover:text-white cursor-pointer transition-colors font-medium">Sign up here</Link>
                 </p>
             </motion.div>
         </div>
