@@ -1,161 +1,104 @@
-# DevDeploy — Cloud Deployment Platform
+# 🚀 DevDeploy — Premium Cloud Deployment Platform
 
-A full-stack, automated cloud deployment platform (like Vercel/Netlify) for static websites and Node.js applications, deployed on AWS EC2 using Docker containers and NGINX reverse proxy.
+DevDeploy is a high-performance, developer-centric cloud deployment platform inspired by Vercel and Netlify. It provides a sleek, modern dashboard for uploading project ZIP files and deploying them instantly with live URLs.
 
 ---
 
 ## ✨ Features
 
-| Feature | Description |
-|---|---|
-| **JWT Authentication** | Secure signup & login with bcrypt password hashing |
-| **ZIP Upload & Deploy** | Upload a `.zip` → auto-extract → Docker build → run → live URL |
-| **Dynamic Dockerfiles** | Auto-generates Dockerfiles based on project type (static HTML or Node.js) |
-| **Auto Port Allocation** | Checks both DB and TCP to find conflict-free ports (range 8001–9999) |
-| **NGINX Reverse Proxy** | Per-project location blocks generated automatically, NGINX reloaded |
-| **Live URL System** | Each project gets `http://<EC2-IP>/<project-name>` |
-| **ZIP Validation** | Blocks path traversal, dangerous file types, and zip bombs |
-| **GitHub Webhooks** | Optional CI/CD: auto-redeploy on push via webhook |
-| **Project Management** | List, view status, delete deployments via dashboard |
-| **Premium UI** | Glassmorphism, animated blobs, gradient buttons, micro-animations |
+- **💎 Premium Dashboard:** Beautiful React dashboard with glassmorphism design, indigo-to-purple gradients, and smooth animations.
+- **📦 Instant ZIP Deployment:** Upload your static or Node.js project .zip file and get a live URL in seconds.
+- **🛠️ Service Isolation:** Dynamic Docker integration allows building isolated container environments for each deployment.
+- **📜 Live Logs Viewer:** A dark-themed terminal-style log viewer for tracking deployment progress in real-time.
+- **🔐 Robust Auth:** JWT-based user authentication (Signup/Login) for managing private projects.
+- **🔄 GitHub Integration:** Webhook support for automatic redeployment on push events.
+- **🌑 Elegant Dark Mode:** Built-in premium appearance with "Obsidian Edge" design tokens.
+- **🌐 Reverse Proxy Routing:** Dynamic port allocation and smart NGINX-style routing through a unified preview engine.
 
 ---
 
-## 📁 Project Structure
+## 📂 Project Structure
 
-```
-DevDeploy/
-├── .gitignore
-├── README.md
-├── backend/
-│   ├── .env.example
-│   ├── package.json
-│   ├── server.js                   # Express entry point
-│   ├── middleware/
-│   │   └── auth.js                 # JWT authentication middleware
-│   ├── models/
-│   │   ├── User.js                 # User schema (username, password)
-│   │   └── Project.js              # Project schema (name, port, url, status)
-│   ├── routes/
-│   │   ├── auth.js                 # POST /api/auth/signup, /api/auth/login
-│   │   ├── deploy.js               # POST /api/deploy, GET/DELETE /api/projects
-│   │   └── webhook.js              # POST /api/webhook/github (CI/CD)
-│   └── utils/
-│       ├── dockerManager.js        # Docker build &    run helpers
-│       ├── nginxManager.js         # Write/remove NGINX configs, reload
-│       ├── portManager.js          # Findático free portsesty (DB + TCP check)
-│       └── zipValidator.js         # Security validation for uploaded ZIPs
-├── frontend/
-│   ├── index.html                  # Main SPA template
-│   ├── style.css                   # Premium dark UI with animations
-│   └── app.js                      # Auth, deploy, dashboard logic
-├── nginx/
-│   ├── devdeploy.conf              # Main NGINX server block config
-│   └── project.conf.template       # Per-project location template
-├── docker/
-│   ├── Dockerfile.static           # Template for static sites
-│   └── Dockerfile.node             # Template for Node.js apps
-└── scripts/
-    ├── setup-ec2.sh                # Full EC2 provisioning script
-    ├── start-backend.sh            # Start backend with PM2
-    ├── deploy-frontend.sh          # Copy frontend to NGINX web root
-    └── cleanup.sh                  # Prune Docker resources
+```text
+/
+├── backend/            # Express.js REST API
+│   ├── models/        # MongoDB schemas
+│   ├── routes/        # Auth, Deploy, & Webhook endpoints
+│   ├── utils/         # Docker, NGINX, and Zip managers
+│   └── server.js      # Main entry point
+├── client/             # React + Vite + Tailwind v4 + Lucide Icons
+│   ├── src/components/ # Reusable UI pieces & layout
+│   ├── src/pages/      # Dashboard, Projects, Logs, Settings, etc.
+│   └── src/lib/api.js  # Centralized API service
+├── workdir/           # Physical storage for extracted deployments
+└── nginx_temp/        # Temporary storage for generated NGINX configs
 ```
 
 ---
 
-## 🚀 Quick Start (Local Development)
+## 🚀 Quick Start Instructions
 
-### Prerequisites
-- Node.js 18+
-- Docker Desktop running
-- MongoDB (Atlas free tier or local)
+Follow these steps to get DevDeploy up and running on your local machine.
 
-### 1. Backend
+### 1. Prerequisites
+- **Node.js**: v18 or later
+- **MongoDB**: A running instance (local or MongoDB Atlas)
+- **Docker Desktop**: Required for containerized deployments
+
+### 2. Environment Setup
+Configure your environment by creating a `.env` file in the `backend/` directory:
+```env
+PORT=5000
+MONGO_URI=mongodb://127.0.0.1:27017/devdeploy
+JWT_SECRET=your_super_secret_key_here
+HOST_IP=localhost
+NGINX_CONF_DIR=C:/path/to/your/DevDeploy/nginx_temp
+WORK_DIR=C:/path/to/your/DevDeploy/workdir
+```
+
+### 3. Install & Build
+Run the following commands in the root directory:
+
+```bash
+# Install backend dependencies
+cd backend
+npm install
+
+# Install frontend dependencies and build
+cd ../client
+npm install
+npm run build
+```
+
+### 4. Start the Platform
+Launch the unified server (serves both API and the built React app):
+```bash
+cd ../backend
+npm start
+```
+Visit **`http://localhost:5000`** to access the dashboard.
+
+---
+
+## 🛠️ Developer Mode
+To run the frontend and backend in development mode with Hot Module Replacement (HMR):
+
+**Backend:**
 ```bash
 cd backend
-cp .env.example .env
-# Edit .env — set MONGO_URI and JWT_SECRET at minimum
-npm install
 npm run dev
 ```
 
-### 2. Frontend
+**Frontend:**
 ```bash
-cd frontend
-# Use any static server:
-npx -y http-server . -p 8080
-# Open http://localhost:8080
+cd client
+npm run dev
 ```
+Vite will proxy API requests automatically.
 
 ---
 
-## ☁️ EC2 Production Deployment
+## 🤝 Contribution
+DevDeploy is designed to be easily extensible. Contributions to deployment engines, log filtering, or new UI components are welcome! 
 
-### Step 1: Provision EC2
-- Launch **Ubuntu 24.04 LTS** instance (t2.micro or larger)
-- Attach an **Elastic IP**
-- Security Group: open ports **22, 80, 443, 5000**
-
-### Step 2: Run Setup Script
-```bash
-ssh ubuntu@<YOUR-ELASTIC-IP>
-git clone <your-repo-url> DevDeploy
-cd DevDeploy
-bash scripts/setup-ec2.sh
-# Log out and back in to apply Docker group
-```
-
-### Step 3: Configure & Start Backend
-```bash
-cd backend
-cp .env.example .env
-nano .env   # Set MONGO_URI, JWT_SECRET, HOST_IP=<Elastic-IP>
-bash ../scripts/start-backend.sh
-```
-
-### Step 4: Deploy Frontend
-```bash
-bash scripts/deploy-frontend.sh
-```
-
-### Step 5: Configure NGINX
-```bash
-sudo cp nginx/devdeploy.conf /etc/nginx/sites-enabled/devdeploy
-sudo mkdir -p /etc/nginx/devdeploy-sites
-sudo nginx -t && sudo systemctl reload nginx
-```
-
-### Step 6: Access
-Open `http://<YOUR-ELASTIC-IP>` in your browser. Sign up, upload a ZIP, and watch it deploy! 🎉
-
----
-
-## 🔗 API Reference
-
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `POST` | `/api/auth/signup` | ❌ | Register a new user |
-| `POST` | `/api/auth/login` | ❌ | Login, receive JWT |
-| `POST` | `/api/deploy` | ✅ | Upload ZIP & deploy (multipart/form-data) |
-| `GET` | `/api/projects` | ✅ | List user's deployments |
-| `DELETE` | `/api/projects/:id` | ✅ | Delete a deployment |
-| `POST` | `/api/webhook/github` | ❌* | GitHub push webhook |
-| `GET` | `/api/health` | ❌ | Server health check |
-
-*Secured via HMAC signature if `GITHUB_WEBHOOK_SECRET` is set.
-
----
-
-## 🔒 Security
-
-- **ZIP Validation**: Path traversal (`../`) detection, blocked file extensions (`.exe`, `.bat`, `.sh`, etc.), zip-bomb size limits (200 MB / 500 files).
-- **Auth**: All deploy/project routes require valid JWT.
-- **Docker Isolation**: Each project runs in its own container with `--restart unless-stopped`.
-- **Input Sanitization**: Project names stripped to `[a-zA-Z0-9-]` only.
-
----
-
-## 📝 License
-
-MIT — Use freely, deploy anywhere.
+Built with love by **DevDeploy Engineering**.

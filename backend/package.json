@@ -1,21 +1,29 @@
 {
-  "name": "devdeploy-backend",
-  "version": "1.0.0",
-  "description": "Backend for DevDeploy platform",
+  "name": "devdeploy-production",
+  "version": "3.1.0",
+  "description": "DevDeploy Multi-Cloud Deployment Platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@aws-sdk/client-ec2": "^3.1021.0",
+    "@aws-sdk/client-s3": "^3.1021.0",
+    "@aws-sdk/lib-storage": "^3.1024.0",
+    "adm-zip": "^0.5.17",
+    "archiver": "^7.0.1",
+    "axios": "^1.7.0",
     "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.3.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.23.0",
     "multer": "^1.4.5-lts.1",
-    "adm-zip": "^0.5.12",
+    "simple-git": "^3.33.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

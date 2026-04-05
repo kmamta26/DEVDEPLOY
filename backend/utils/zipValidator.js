@@ -10,9 +10,9 @@ const BLOCKED_EXTENSIONS = [
 ];
 
 // Maximum allowed extracted size (200 MB)
-const MAX_EXTRACTED_SIZE = 200 * 1024 * 1024;
+const MAX_EXTRACTED_SIZE = 2000 * 1024 * 1024;
 // Maximum allowed file count
-const MAX_FILE_COUNT = 500;
+const MAX_FILE_COUNT = 50000;
 
 /**
  * Validates a ZIP file for safety before extraction.

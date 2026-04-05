@@ -1,22 +1,23 @@
-{
-  "users": [
-    {
-      "id": "admin-id-123",
-      "username": "admin",
-      "password": "password123"
-    }
-  ],
-  "projects": [
-    {
-      "_id": "1774335088514",
-      "name": "acoffe1",
-      "userId": "admin-id-123",
-      "port": 8001,
-      "url": "http://localhost:5000/acoffe1/",
-      "githubRepo": "kmamta26/coffie",
-      "githubUrl": "https://github.com/kmamta26/coffie.git",
-      "status": "failed"
-    }
-  ],
-  "nextPort": 8016
-}
+[
+  {
+    "id": "node-1775386214696",
+    "_id": "node-1775386214696",
+    "projectName": "ac1",
+    "folderPath": "C:\\Users\\hp\\OneDrive\\Desktop\\dev1\\DevDeploy\\workdir\\node-1775386214696",
+    "url": "/node-1775386214696",
+    "status": "active",
+    "userId": "mock_user_6d616d74",
+    "logs": [
+      "[SYNC] Node node-1775386214696 Online @ Station 5000"
+    ]
+  },
+  {
+    "id": "node-1775387861242",
+    "_id": "node-1775387861242",
+    "projectName": "acoffe",
+    "folderPath": "C:\\Users\\hp\\OneDrive\\Desktop\\dev1\\DevDeploy\\workdir\\node-1775387861242",
+    "url": "/node-1775387861242",
+    "status": "active",
+    "userId": "mock_user_6d616d74"
+  }
+]
